@@ -3,9 +3,9 @@ categories:
 - ""
 - ""
 date: "2020-09-28"
-description: How different will IMDB Ratings be in term of directors and genre
+description: "How different will IMDB Ratings be in term of directors and genre"
 draft: false
-image: pic09.jpg
+image: pic03.jpg
 keywords: ""
 slug: blog6
 title: Genre & Director: We are not object
@@ -23,7 +23,6 @@ library(ggplot2)
 library(gridExtra)
 library(ggridges)
 library(viridis)
-options(digits=3)
 ```
 
 # IMDB ratings: Differences between directors
@@ -94,7 +93,7 @@ t.test(rating ~ director, data = Spielberg_Burton) #Very easy and quick
 
 ## Hypothesis test result
 
-We can see the p-value given is 0.011 and the t-stat is 2.71. According to what we mentioned in the beginning, the null hypothesis is rejected and the altenative hypothesis is accepted. That is to say, the means of the ratings of the two directors are NOT the same.
+We can see the p-value given is 0.011 and the t-stat is 2.71. According to what we mentioned in the beginning, the null hypothesis is rejected and the altenative hypothesis is accepted. That is to say, the means of the ratings of the two directors are NOT the same. And we rate their movies differently! 
 
 
 # Plot the difference in IMDB Ratings

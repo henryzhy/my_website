@@ -1,0 +1,67 @@
+---
+categories:
+- ""
+- ""
+date: "2020-09-28"
+description: "What did Warrent Buffett say in 2020 Berkshire Hathaway Annual Shareholder Meeting?"
+draft: false
+image: pic04.jpg
+keywords: ""
+slug: blog5
+title: Oracle of Omaha
+---
+
+
+
+<pre class="r"><code>library(tm)</code></pre>
+<pre><code>## Warning: 程辑包&#39;tm&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre><code>## 载入需要的程辑包：NLP</code></pre>
+<pre class="r"><code>library(wordcloud)</code></pre>
+<pre><code>## Warning: 程辑包&#39;wordcloud&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre><code>## 载入需要的程辑包：RColorBrewer</code></pre>
+<div id="purpose-of-research" class="section level1">
+<h1>Purpose of research</h1>
+<p>There are always things for us to learn in investment. One of the best ways to grow your knowledge is to learn from those masters. No one would doubt the experience of Warren Buffett, the godfather of value investing. We are curious about investment under current Covid-19 pandemic. We use R to conclude those words that Warren mentioned over 15 times during the annual shareholder meeting and plot them on the wordcloud in which we can tell the frequency of words by their sizes.</p>
+</div>
+<div id="data-source" class="section level1">
+<h1>Data source</h1>
+<p>There is a completed transcript of 2020 Berkshire Hathaway Annual Shareholder Meeting from rev.com. So we just need to download the document and transform it to txt file.</p>
+</div>
+<div id="packages" class="section level1">
+<h1>Packages</h1>
+<p>We need to adopt a package called “wordcloud” to plot the frequency of Warren’s words to see what he mentioned the most in 2020 Bershire Hathaway Annual Shareholder Meeting. Also, we use a package called “tm” to briefly clean the text file to make sure we won’t calculate some elements, such as space and number, or record the same word just because it is typed in both uppercase and lowercase.</p>
+</div>
+<div id="wordcloud" class="section level1">
+<h1>Wordcloud</h1>
+<pre class="r"><code>text1&lt;-paste(scan(&quot;buffett2020.txt&quot;, what = character(0),sep = &quot;&quot;), collapse = &quot; &quot;)
+tmpText&lt;- data.frame(c(text1),row.names=c(&quot;Text1&quot;))
+df_title &lt;- data.frame(doc_id=row.names(tmpText),
+                       text=tmpText$c.text1.)
+ds &lt;- DataframeSource(df_title)
+
+corp &lt;- VCorpus(ds)
+
+corp &lt;- tm_map(corp,removePunctuation) 
+corp &lt;-tm_map(corp,tolower)
+corp &lt;- tm_map(corp,stripWhitespace)
+corp &lt;- tm_map(corp,PlainTextDocument) 
+corp &lt;- tm_map(corp,removeNumbers)
+corp &lt;- tm_map(corp, function(x){removeWords(x,stopwords())}) 
+term.matrix &lt;- TermDocumentMatrix(corp)
+
+
+term.matrix &lt;- as.matrix(term.matrix)
+colnames(term.matrix) &lt;- c(&quot;Text1&quot;)
+df&lt;-data.frame(term.matrix)
+write.csv(df,&#39;term_matrix.csv&#39;)</code></pre>
+<pre class="r"><code>df&lt;-read.csv(&#39;term_matrix.csv&#39;,header=TRUE,row.names=1)
+
+wordcloud(row.names(df) , df$Text1 , min.freq=10,col=brewer.pal(8, &quot;Dark2&quot;), rot.per=0.3 )</code></pre>
+<p><img src="/blogs/blog5_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>We can see that Warren mentioned “people” quite frequently. We know that people face the pressure of both the virus and redundancy. However, we should be aware of the power of people and believe in the re-boom of the economy.</p>
+<p>He also mentioned about debt.Under current lockdown policies imposed by many countries, companies are difficult to keep normal operation nowadays. As a matter of fact, they are suffering from distress. It is very important to pay attention those companies with high debt when investing.</p>
+<p>We also notice that he mentioned some industries, such as oil and airlines. He personally believed that aviation industry would not recover until 2023 and therefore sold all his stocks of major US airlines. He also predicted that oil production will decrease and therefore bet on Oil future.</p>
+</div>

@@ -6,7 +6,26 @@
     <description>Recent content on Website of Henry Zhang</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 31 Oct 2017 22:42:51 -0500</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 28 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>History Covid-19 cases across China</title>
+      <link>/blogs/blog7/</link>
+      <pubDate>Mon, 28 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blogs/blog7/</guid>
+      <description>IntroductionPurpose of ResearchWe always find it boring to see those number in Excel without plot or those plot without specific location infomation when checking the confirmed cases number online. So here, we would like to see how to combine those number with a map.
+Data SourceWe collect data from the package named “nCov2019”. It has lots of data about Covid-19 and is available in both Chinese and English.</description>
+    </item>
+    
+    <item>
+      <title>Oracle of Omaha</title>
+      <link>/blogs/blog5/</link>
+      <pubDate>Mon, 28 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blogs/blog5/</guid>
+      <description>library(tm)## Warning: 程辑包&amp;#39;tm&amp;#39;是用R版本3.6.3 来建造的## 载入需要的程辑包：NLPlibrary(wordcloud)## Warning: 程辑包&amp;#39;wordcloud&amp;#39;是用R版本3.6.3 来建造的## 载入需要的程辑包：RColorBrewerPurpose of researchThere are always things for us to learn in investment. One of the best ways to grow your knowledge is to learn from those masters. No one would doubt the experience of Warren Buffett, the godfather of value investing. We are curious about investment under current Covid-19 pandemic. We use R to conclude those words that Warren mentioned over 15 times during the annual shareholder meeting and plot them on the wordcloud in which we can tell the frequency of words by their sizes.</description>
+    </item>
+    
     <item>
       <title>Aliquam</title>
       <link>/blogs/aliquam/</link>

@@ -1,5 +1,5 @@
 # Site settings
-baseURL = "http://example.org/"
+baseURL = "https://hangyu-zhang-website.netlify.app/"
 languageCode = "en-us"
 title = "Website of Henry Zhang"
 theme = "forty"
@@ -55,9 +55,9 @@ disqusShortname = ""
       #name = "Generic Blog"
       #url = "blogs/ipsum"
 
-    [[params.navigation.links]]
-      name = "Elements"
-      url = "elements.html"
+    #[[params.navigation.links]]
+      #name = "Elements"
+      #url = "elements.html"
 
     # Add custom links here by uncommenting code below. To remove links just delete
     # the [[params.navigation.links]] map associated with that link. Copy and paste
@@ -94,19 +94,19 @@ disqusShortname = ""
     [[params.tiles.showcase]]
       title = "Warren Buffett's Words"
       subtitle = "What did Warren Buffett mention the most under Covid-19?"
-      image = "pic01.jpg"
+      image = "pic03.jpg"
       url = "blogs/blog5"
 
-    [[params.tiles.showcase]]
-      title = "How We Rate movies: Directors and genres"
-      subtitle = "Different directors and genres can effect our ratings on movies"
-      image = "pic02.jpg"
-      url = "blogs/blog6"
+    #[[params.tiles.showcase]]
+      #title = "How We Rate movies: Directors and genres"
+      #subtitle = "Different directors and genres can effect our ratings on movies"
+      #image = "pic04.jpg"
+      #url = "blogs/blog6"
 
     [[params.tiles.showcase]]
       title = "Covid-19 in China"
       subtitle = "How many cases in different provinces in China?"
-      image = "pic03.jpg"
+      image = "pic05.jpg"
       url = "blogs/blog7"
 
     #[[params.tiles.showcase]]

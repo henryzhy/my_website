@@ -1,0 +1,149 @@
+---
+categories:
+- ""
+- ""
+date: "2020-09-28"
+description: "How many cases observed in different provinces? A visualisation map with Covid-19 cases in China."
+draft: false
+image: pic01.jpg
+keywords: ""
+slug: blog7
+title: History Covid-19 cases across China
+---
+
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<div id="purpose-of-research" class="section level2">
+<h2>Purpose of Research</h2>
+<p>We always find it boring to see those number in Excel without plot or those plot without specific location infomation when checking the confirmed cases number online. So here, we would like to see how to combine those number with a map.</p>
+</div>
+<div id="data-source" class="section level2">
+<h2>Data Source</h2>
+<p>We collect data from the package named “nCov2019”. It has lots of data about Covid-19 and is available in both Chinese and English.</p>
+</div>
+<div id="packages" class="section level2">
+<h2>Packages</h2>
+<p>We mainly use a package called “nCov2019” which can be found in github. It is a package with auto updated data with comprehensive explanation.</p>
+<p>We also introduce “magick” here, which we can use to make our plot fancy. It helps us to make sure our map is in the right shape.</p>
+<p>We also use a package called “RColorBrewer” which we use to change the colour of different provinces to show how many cases they have until now.</p>
+<pre class="r"><code>library(readr)
+library(lubridate)</code></pre>
+<pre><code>## Warning: 程辑包&#39;lubridate&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre><code>## 
+## 载入程辑包：&#39;lubridate&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
+<pre class="r"><code>library(magrittr)
+library(tibble)</code></pre>
+<pre><code>## Warning: 程辑包&#39;tibble&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## 载入程辑包：&#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:lubridate&#39;:
+## 
+##     intersect, setdiff, union</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<pre><code>## Warning: 程辑包&#39;ggplot2&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre class="r"><code>library(tidyr)</code></pre>
+<pre><code>## Warning: 程辑包&#39;tidyr&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre><code>## 
+## 载入程辑包：&#39;tidyr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:magrittr&#39;:
+## 
+##     extract</code></pre>
+<pre class="r"><code>library(purrr)</code></pre>
+<pre><code>## Warning: 程辑包&#39;purrr&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre><code>## 
+## 载入程辑包：&#39;purrr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:magrittr&#39;:
+## 
+##     set_names</code></pre>
+<pre class="r"><code>library(gganimate)</code></pre>
+<pre><code>## Warning: 程辑包&#39;gganimate&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre class="r"><code>library(gifski)</code></pre>
+<pre><code>## Warning: 程辑包&#39;gifski&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre class="r"><code>library(nCov2019)
+library(magick)</code></pre>
+<pre><code>## Warning: 程辑包&#39;magick&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre><code>## Linking to ImageMagick 6.9.9.14
+## Enabled features: cairo, freetype, fftw, ghostscript, lcms, pango, rsvg, webp
+## Disabled features: fontconfig, x11</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: 程辑包&#39;tidyverse&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre><code>## -- Attaching packages -------------------------------------------------------------------------------- tidyverse 1.3.0 --</code></pre>
+<pre><code>## √ stringr 1.4.0     √ forcats 0.5.0</code></pre>
+<pre><code>## Warning: 程辑包&#39;forcats&#39;是用R版本3.6.3 来建造的</code></pre>
+<pre><code>## -- Conflicts ----------------------------------------------------------------------------------- tidyverse_conflicts() --
+## x lubridate::as.difftime() masks base::as.difftime()
+## x lubridate::date()        masks base::date()
+## x tidyr::extract()         masks magrittr::extract()
+## x dplyr::filter()          masks stats::filter()
+## x lubridate::intersect()   masks base::intersect()
+## x dplyr::lag()             masks stats::lag()
+## x purrr::set_names()       masks magrittr::set_names()
+## x lubridate::setdiff()     masks base::setdiff()
+## x lubridate::union()       masks base::union()</code></pre>
+<pre class="r"><code>library(RColorBrewer)</code></pre>
+</div>
+</div>
+<div id="generating-data" class="section level1">
+<h1>Generating data</h1>
+<pre class="r"><code>x &lt;- get_nCov2019()     # get latest covid-19 data
+province_data &lt;- x[]       # generate province data
+head(province_data)</code></pre>
+<pre><code>##   name nowConfirm confirm suspect dead deadRate showRate heal healRate showHeal
+## 1 香港        180    5075       0  105     2.07    FALSE 4790    94.38     TRUE
+## 2 上海         46     992       0    7     0.71    FALSE  939    94.66     TRUE
+## 3 陕西         26     403       0    3     0.74    FALSE  374    92.80     TRUE
+## 4 四川         26     688       0    3     0.44    FALSE  659    95.78     TRUE
+## 5 台湾         24     513       0    7     1.36    FALSE  482    93.96     TRUE
+## 6 广东         22    1819       0    8     0.44    FALSE 1789    98.35     TRUE</code></pre>
+</div>
+<div id="map" class="section level1">
+<h1>Map</h1>
+<pre class="r"><code>load(&quot;ProvinceMapDatas.Rda&quot;) </code></pre>
+</div>
+<div id="combine-map-info-with-covid-19-info" class="section level1">
+<h1>Combine map info with covid-19 info</h1>
+<pre class="r"><code>df_China &lt;- df_China %&gt;%
+  left_join(province_data, by=c(&quot;NAME&quot;=&quot;name&quot;)) 
+
+names(df_China)[16] &lt;- &quot;Confirm_cases&quot;</code></pre>
+</div>
+<div id="plotting" class="section level1">
+<h1>Plotting</h1>
+<pre class="r"><code>ggplot() +
+  geom_polygon(data=df_China, 
+               aes(x=long, y=lat, group=interaction(class, group), 
+                   fill=`confirm`), colour=&quot;black&quot;, size=0.25) +  # plot Chinese map
+  geom_rect(aes(xmin=124, xmax=124+9.3, ymin=16-0.3, ymax=16+9), 
+            fill=NA, colour=&quot;black&quot;, size=0.25) +
+  geom_line(data=df_NanHaiLine, aes(x=long, y=lat, group=ID), 
+            colour=&quot;black&quot;, size=1) +  # make sure we draw the right border
+  scale_fill_gradientn(colours=colorRampPalette(rev(brewer.pal(11,&#39;Spectral&#39;)))(32),
+                       name = &quot;History \nCases&quot;,
+                       limits = c(500,2000)) +
+  coord_map() +  
+  ylim(14, 54) +
+  labs(x=&quot;Longitude&quot;, y=&quot;Latitude&quot;) +
+  ggtitle(&quot;History Covid-19 Cases in China&quot;) +
+  theme(
+    plot.title=element_text(hjust=0.5),
+    legend.position = c(0.1,0.2),
+    legend.background = element_blank())+
+  theme_bw()</code></pre>
+<p><img src="/blogs/blog7_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>We can see the confirm cases plot in a Chinese map. We notice that east China has the most confirmed cases between 1,000 to 1,500 from February. West China is in good shape and witness cases under 1,000.</p>
+</div>
