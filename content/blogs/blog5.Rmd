@@ -1,0 +1,72 @@
+---
+categories:
+- ""
+- ""
+date: "2020-09-28"
+description: What did Warrent Buffett say in 2020 Berkshire Hathaway Annual Shareholder Meeting?
+draft: false
+image: pic07.jpg
+keywords: ""
+slug: blog5
+title: Oracle of Omaha's wise words
+---
+
+```{r}
+library(tm)
+library(wordcloud)
+```
+# Purpose of research
+
+There are always things for us to learn in investment. One of the best ways to grow your knowledge is to learn from those masters. No one would doubt the experience of Warren Buffett, the godfather of value investing. We are curious about investment under current Covid-19 pandemic. We use R to conclude those words that Warren mentioned over 15 times during the annual shareholder meeting and plot them on the wordcloud in which we can tell the frequency of words by their sizes.
+
+
+# Data source
+
+There is a completed transcript of 2020 Berkshire Hathaway Annual Shareholder Meeting from rev.com. So we just need to download the document and transform it to txt file.
+
+
+# Packages
+
+We need to adopt a package called "wordcloud" to plot the frequency of Warren's words to see what he mentioned the most in 2020 Bershire Hathaway Annual Shareholder Meeting. Also, we use a package called "tm" to briefly clean the text file to make sure we won't calculate some elements, such as space and number, or record the same word just because it is typed in both uppercase and lowercase.
+
+
+# Wordcloud
+
+```{r}
+text1<-paste(scan("buffett2020.txt", what = character(0),sep = ""), collapse = " ")
+tmpText<- data.frame(c(text1),row.names=c("Text1"))
+df_title <- data.frame(doc_id=row.names(tmpText),
+                       text=tmpText$c.text1.)
+ds <- DataframeSource(df_title)
+
+corp <- VCorpus(ds)
+
+corp <- tm_map(corp,removePunctuation) 
+corp <-tm_map(corp,tolower)
+corp <- tm_map(corp,stripWhitespace)
+corp <- tm_map(corp,PlainTextDocument) 
+corp <- tm_map(corp,removeNumbers)
+corp <- tm_map(corp, function(x){removeWords(x,stopwords())}) 
+term.matrix <- TermDocumentMatrix(corp)
+
+
+term.matrix <- as.matrix(term.matrix)
+colnames(term.matrix) <- c("Text1")
+df<-data.frame(term.matrix)
+write.csv(df,'term_matrix.csv')
+```
+
+```{r,message=FALSE, warning=FALSE}
+df<-read.csv('term_matrix.csv',header=TRUE,row.names=1)
+
+wordcloud(row.names(df) , df$Text1 , min.freq=10,col=brewer.pal(8, "Dark2"), rot.per=0.3 )
+
+```
+
+
+# Conclusion
+We can see that Warren mentioned "people" quite frequently. We know that people face the pressure of both the virus and redundancy. However, we should be aware of the power of people and believe in the re-boom of the economy.
+
+He also mentioned about debt.Under current lockdown policies imposed by many countries, companies are difficult to keep normal operation nowadays. As a matter of fact, they are suffering from distress. It is very important to pay attention those companies with high debt when investing.
+
+We also notice that he mentioned some industries, such as oil and airlines. He personally believed that aviation industry would not recover until 2023 and therefore sold all his stocks of major US airlines. He also predicted that oil production will decrease and therefore bet on Oil future.

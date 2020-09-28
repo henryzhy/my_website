@@ -1,0 +1,109 @@
+---
+categories:
+- ""
+- ""
+date: "2020-09-28"
+description: How different will IMDB Ratings be in term of directors and genre
+draft: false
+image: pic09.jpg
+keywords: ""
+slug: blog6
+title: Genre & Director: We are not object
+---
+
+```{r, setup, include=FALSE}
+library(mosaic)   # Load additional packages here 
+library(tidyverse)
+library(infer)
+library(here)
+library(gapminder)
+library(tidyquant)
+library(tidytext)
+library(ggplot2)
+library(gridExtra)
+library(ggridges)
+library(viridis)
+options(digits=3)
+```
+
+# IMDB ratings: Differences between directors
+
+Let's explore whether the mean IMDB rating for Steven Spielberg and Tim Burton are the same or not. 
+
+## Hypotheses
+
+a)Null Hypothesis: The means of the ratings of the two directors are the same. t stat<2, p-value>5%
+b)Alternative Hypothesis: The means of the ratings of the two directors are NOT the same.t stat>2 p-value<5%
+
+```{r load-movies-data, message=FALSE, warning=FALSE}
+movies <- read_csv(here::here("content/blogs/movies.csv"))
+glimpse(movies)
+```
+
+```{r,message=FALSE, warning=FALSE}
+#Try to use the 'infer' package
+#first just choose these two types of genres
+Spielberg_Burton <- movies %>%
+  filter (director %in% c("Steven Spielberg", "Tim Burton")) %>% 
+  select(director, rating) # we do not need all other variables
+
+# 1. See what the actual, observed difference (or delta) is between the two groups
+observed_difference <- Spielberg_Burton %>% 
+  specify(rating ~ director) %>% 
+  calculate(stat = "diff in means", order = c("Steven Spielberg", "Tim Burton")) 
+observed_difference
+
+# 2. Generate a distribution of simulated values *as if* we lived in a world
+# where there's no difference between the two groups.
+ratings_in_null_world <- Spielberg_Burton %>% 
+  specify(rating ~ director) %>% 
+  hypothesize(null = "independence") %>% 
+  generate(reps = 1000, type = "permute")
+
+# 3. See the difference in average ratings in null world and compare what we saw in
+# our sample to null world
+diff_means_null_world <- ratings_in_null_world %>% 
+  calculate(stat = "diff in means", order = c("Steven Spielberg", "Tim Burton")) #Calculate stat
+
+diff_means_null_world %>% 
+  visualise(obs_stat = observed_difference, direction = "both")+
+  labs(x = "Average Steven Spielberg - Average Tim Burton Rating", y = "Count",
+       title = "Differences in Differences in Steven Spielberg and Tim Burton Rating \nin a world where there's really no difference",
+       subtitle = "Observed difference marked in red")
+
+# 4. Calculate a p-value, or the probability that we would see a red line at
+# least that extreme in null world
+diff_means_null_world %>% 
+  get_pvalue(obs_stat = observed_difference, direction = "both")
+
+# 5. Check the confidence interval
+ci_diff_means <- Spielberg_Burton %>% 
+  specify(rating ~ director) %>%
+  generate(reps = 1000) %>% 
+  calculate(stat = "diff in means", order = c("Steven Spielberg", "Tim Burton")) %>% 
+  get_ci(level = 0.95)
+ci_diff_means
+
+```
+
+```{r}
+#Now try to use the t.test command
+options(digits=5)
+t.test(rating ~ director, data = Spielberg_Burton) #Very easy and quick
+```
+
+## Hypothesis test result
+
+We can see the p-value given is 0.011 and the t-stat is 2.71. According to what we mentioned in the beginning, the null hypothesis is rejected and the altenative hypothesis is accepted. That is to say, the means of the ratings of the two directors are NOT the same.
+
+
+# Plot the difference in IMDB Ratings
+
+```{r}
+#distribution of IMDB ratings
+ggplot(movies,aes(x=rating,y=genre,fill=..x..,group=genre))+
+geom_density_ridges_gradient(scale=5, rel_min_height=0.01)+
+  scale_fill_viridis(name='Ratings', option="C")+ #Select style according to the resource above
+  labs(title = "IMDB Film Ratings")+
+  theme_bw()
+```

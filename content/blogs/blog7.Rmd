@@ -1,0 +1,108 @@
+---
+categories:
+- ""
+- ""
+date: "2020-09-28"
+description: How many cases observed in different provinces? A visualisation map with Covid-19 cases in China.
+draft: false
+image: pic07.jpg
+keywords: ""
+slug: blog7
+title: History Covid-19 cases across China
+---
+#Introduction
+
+## Purpose of Research
+
+We always find it boring to see those number in Excel without plot or those plot without specific location infomation when checking the confirmed cases number online. So here, we would like to see how to combine those number with a map.
+
+## Data Source
+
+We collect data from the package named "nCov2019". It has lots of data about Covid-19 and is available in both Chinese and English.
+
+## Packages
+
+We mainly use a package called "nCov2019" which can be found in github. It is a package with auto updated data with comprehensive explanation.
+
+We also introduce "magick" here, which we can use to make our plot fancy. It helps us to make sure our map is in the right shape.
+
+We also use a package called "RColorBrewer" which we use to change the colour of different provinces to show how many cases they have until now.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+library(lubridate)
+library(magrittr)
+library(tibble)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(purrr)
+library(gganimate)
+library(gifski)
+library(nCov2019)
+library(magick)
+library(tidyverse)
+library(RColorBrewer)
+```
+
+
+# Generating data
+
+```{r}
+x <- get_nCov2019()     # get latest covid-19 data
+province_data <- x[]       # generate province data
+head(province_data)
+```
+
+
+# Map
+
+```{r}
+load("ProvinceMapDatas.Rda") 
+```
+
+
+# Combine map info with covid-19 info
+
+```{r, message=FALSE, warning=FALSE}
+df_China <- df_China %>%
+  left_join(province_data, by=c("NAME"="name")) 
+
+names(df_China)[16] <- "Confirm_cases"
+```
+
+
+# Plotting
+
+```{r}
+ggplot() +
+  geom_polygon(data=df_China, 
+               aes(x=long, y=lat, group=interaction(class, group), 
+                   fill=`confirm.x`), colour="black", size=0.25) +  # plot Chinese map
+  geom_rect(aes(xmin=124, xmax=124+9.3, ymin=16-0.3, ymax=16+9), 
+            fill=NA, colour="black", size=0.25) +
+  geom_line(data=df_NanHaiLine, aes(x=long, y=lat, group=ID), 
+            colour="black", size=1) +  # make sure we draw the right border
+  scale_fill_gradientn(colours=colorRampPalette(rev(brewer.pal(11,'Spectral')))(32),
+                       name = "History \nCases",
+                       limits = c(500,2000)) +
+  coord_map() +  
+  ylim(14, 54) +
+  labs(x="Longitude", y="Latitude") +
+  ggtitle("History Covid-19 Cases in China") +
+  theme(
+    plot.title=element_text(hjust=0.5),
+    legend.position = c(0.1,0.2),
+    legend.background = element_blank())+
+  theme_bw()
+```
+
+
+# Conclusion
+
+We can see the confirm cases plot in a Chinese map. We notice that east China has the most confirmed cases between 1,000 to 1,500 from February. West China is in good shape and witness cases under 1,000.
